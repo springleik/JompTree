@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.List;
+import java.util.ArrayList;
 
 // Populate a Java class with random code
 public class JompTree {
@@ -42,9 +43,10 @@ public class JompTree {
             // construct & randomly populate tree
             node listHead = new brnch ();
             listHead.populate ();
-            listHead.express ();
 
             // express tree recursively as text on console
+            listHead.express ();
+
             System.out.println ("/* " + node.nodeCount + ", " + node.maxDepth + " */");
         }
 
@@ -77,21 +79,61 @@ class brnch extends node {
     String pre;
     String inter;
     String post;
-    List <node> the_list;
+    int numOpnds;
+    List <node> theList;
     void populate () {
         if (null == theScan || !theScan.hasNext ()) {
             try {
                 theScan = new Scanner (theFile); }
                 catch (FileNotFoundException e) {
-                    System.out.println ("File not found.");
+                    System.out.println ("Branch file not found.");
                     System.exit (-2);
             }
         }
-        pre = theScan.next ();
+        String theLine = theScan.nextLine ();
+        String [] theWords = theLine.split (" ", 4);
+        // handle unary operations
+        if (theWords.length == 2) {
+            numOpnds = 1;
+            pre = theWords [0];
+            inter = null;
+            post = theWords[1];
+        }
+        // handle binary operations
+        else if (theWords.length == 3) {
+            numOpnds = 2;
+            pre = theWords [0];
+            inter = theWords [1];
+            post = theWords [2];
+        }
+        // handle ternary operations
+        else if (theWords.length == 4) {
+            numOpnds = 3;
+            pre = theWords [0];
+            inter = theWords [1];
+            post = theWords [3];
+        }
+        else {
+            System.out.println ("Wrong word count on a line.");
+            System.exit (-3);
+        }
 
+        // append the right number of operands
+        node theNode = null;
+        theList = new ArrayList <> ();
+        for (int i = 0; i < numOpnds; i++) {
+            if (0.5 < Math.random ()) {
+                theNode = new brnch ();
+            }
+            else {
+                theNode = new leaf ();
+            }
+            theList.add (theNode);
+            theNode.populate ();
+        }
     }
     void express () {
-        System.out.println (pre);
+        System.out.println (String.format ("pre: %s, inter: %s, post: %s", pre, inter, post));
     }
 }
 
@@ -109,7 +151,7 @@ class leaf extends node {
             try {
                 theScan = new Scanner (theFile); }
                 catch (FileNotFoundException e) {
-                    System.out.println ("File not found.");
+                    System.out.println ("Leaf file not found.");
                     System.exit (-2);
             }
         }

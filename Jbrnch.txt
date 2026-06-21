@@ -1,5 +1,13 @@
-one
-two
-three
-four
-five
+( + )
+( - )
+( * )
+( / )
+( < )
+( > )
+( == )
+( != )
+Math.ceil( )
+Math.sqrt( )
+Math.max( , )
+Math.min( , )
+Math.fma( , , )
