@@ -20,11 +20,12 @@ public class JompTree {
         System.out.println (String.format ("Opening branch input file: %s, leaf input file: %s", args[0], args[1]));
 
         // open branch and leaf files for reading as text
-        File brnchFile = new File (args[0]);
-        File leafFile = new File (args[1]);
+        brnch.theFile = new File (args[0]);
+        leaf.theFile = new File (args[1]);
         try {
-        leaf.theScan = new Scanner (leafFile);
-        brnch.theScan = new Scanner (brnchFile); }
+            brnch.theScan = new Scanner (brnch.theFile);
+            leaf.theScan = new Scanner (leaf.theFile);
+        }
         catch (FileNotFoundException e) {
             System.out.println ("File not found.");
             System.exit (-2);
@@ -69,6 +70,7 @@ abstract void express ();
 // composite class, may have child nodes
 class brnch extends node {
     // class members
+    static File theFile;
     static Scanner theScan;
 
     // instance members
@@ -77,9 +79,15 @@ class brnch extends node {
     String post;
     List <node> the_list;
     void populate () {
-        if (theScan.hasNext ()) {
-            pre = theScan.next ();
+        if (null == theScan || !theScan.hasNext ()) {
+            try {
+                theScan = new Scanner (theFile); }
+                catch (FileNotFoundException e) {
+                    System.out.println ("File not found.");
+                    System.exit (-2);
+            }
         }
+        pre = theScan.next ();
 
     }
     void express () {
@@ -90,13 +98,22 @@ class brnch extends node {
 // component class, no child nodes
 class leaf extends node {
     // class members
+    static File theFile;
     static Scanner theScan;
 
     // instance members
     String the_str;
     int my_depth;
     void populate () {
-        ;
+        if (null == theScan || !theScan.hasNext ()) {
+            try {
+                theScan = new Scanner (theFile); }
+                catch (FileNotFoundException e) {
+                    System.out.println ("File not found.");
+                    System.exit (-2);
+            }
+        }
+        the_str = theScan.next ();
     }
     void express () {
         ;
