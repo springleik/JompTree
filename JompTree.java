@@ -1,4 +1,5 @@
-/* Java Compiler Test Case Generator
+/**********************************
+* Java Compiler Test Case Generator
 * File JompTree.java
 * M. Williamsen
 * 21 June 2026
@@ -15,10 +16,11 @@ public class JompTree {
     public static void main(String[] args) {
         // check command line arguments
         if (args.length < 2) {
-            System.out.println ("Usage: java JompTree Jbrnch.txt Jleaf.txt");
+            System.err.println ("Usage: java JompTree Jbrnch.txt Jleaf.txt");
             System.exit (-1);
         }
-        System.out.println (String.format ("Opening branch input file: %s, leaf input file: %s", args[0], args[1]));
+        System.err.println (String.format ("Opening branch input file: %s, "
+            + "leaf input file: %s", args[0], args[1]));
 
         // open branch and leaf files for reading as text
         brnch.theFile = new File (args[0]);
@@ -28,12 +30,14 @@ public class JompTree {
             leaf.theScan = new Scanner (leaf.theFile);
         }
         catch (FileNotFoundException e) {
-            System.out.println ("File not found.");
+            System.err.println ("File not found.");
             System.exit (-2);
         }
 
         // generate 25 random outputs on console
-        System.out.println ("text to open a class and a method");
+        System.out.println ("class what {");
+        System.out.println ("    public void what () {");
+        System.out.println ("        double what = 0, first = 1, second = 2, third = 3;");
         for (int i = 0; i < 25; i++)
         {
             node.nodeCount = 0;
@@ -45,12 +49,13 @@ public class JompTree {
             listHead.populate ();
 
             // express tree recursively as text on console
+            System.out.print ("        what = ");
             listHead.express ();
-
-            System.out.println ("/* " + node.nodeCount + ", " + node.maxDepth + " */");
+            System.out.println ("; /* " + node.nodeCount + ", " + node.maxDepth + " */");
         }
 
-        System.out.println ("test to close a class and a method");
+        System.out.println ("    }");
+        System.out.println ("}");
         brnch.theScan.close ();
         leaf.theScan.close ();
     }
@@ -83,11 +88,12 @@ class brnch extends node {
     List <node> theList;
 
     void populate () {
+        theDepth += 1;
         if (null == theScan || !theScan.hasNext ()) {
             try {
                 theScan = new Scanner (theFile); }
                 catch (FileNotFoundException e) {
-                    System.out.println ("Branch file not found.");
+                    System.err.println ("Branch file not found.");
                     System.exit (-2);
             }
         }
@@ -115,7 +121,7 @@ class brnch extends node {
             post = theWords [3];
         }
         else {
-            System.out.println ("Wrong word count on a line.");
+            System.err.println ("Wrong word count on a line.");
             System.exit (-3);
         }
 
@@ -123,7 +129,7 @@ class brnch extends node {
         node theNode = null;
         theList = new ArrayList <> ();
         for (int i = 0; i < numOpnds; i++) {
-            if (0.5 < Math.random ()) {
+            if ((0.5 < Math.random ()) && (nodeCount < 15) && (theDepth < 11)) {
                 theNode = new brnch ();
             }
             else {
@@ -132,19 +138,20 @@ class brnch extends node {
             theList.add (theNode);
             theNode.populate ();
         }
+        theDepth -= 1;
     }
 
     void express () {
         System.out.print (pre);
         boolean first = true;
-        for (int i = 0; i < numOpnds; i++) {
-            theList.get (i).express ();
+        for (node aNode: theList) {
             if (first) {
                 first = false;
             }
             else {
                 System.out.print (inter);
             }
+            aNode.express ();
         }
         System.out.print (post);
     }
@@ -158,14 +165,19 @@ class leaf extends node {
 
     // instance members
     String theStr;
-    int my_depth;
+    int myDepth;
 
     void populate () {
+        nodeCount += 1;
+        myDepth = theDepth;
+        if (theDepth > maxDepth) {
+            maxDepth = theDepth;
+        }
         if (null == theScan || !theScan.hasNext ()) {
             try {
                 theScan = new Scanner (theFile); }
                 catch (FileNotFoundException e) {
-                    System.out.println ("Leaf file not found.");
+                    System.err.println ("Leaf file not found.");
                     System.exit (-2);
             }
         }
