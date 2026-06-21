@@ -81,6 +81,7 @@ class brnch extends node {
     String post;
     int numOpnds;
     List <node> theList;
+
     void populate () {
         if (null == theScan || !theScan.hasNext ()) {
             try {
@@ -132,8 +133,20 @@ class brnch extends node {
             theNode.populate ();
         }
     }
+
     void express () {
-        System.out.println (String.format ("pre: %s, inter: %s, post: %s", pre, inter, post));
+        System.out.print (pre);
+        boolean first = true;
+        for (int i = 0; i < numOpnds; i++) {
+            theList.get (i).express ();
+            if (first) {
+                first = false;
+            }
+            else {
+                System.out.print (inter);
+            }
+        }
+        System.out.print (post);
     }
 }
 
@@ -144,8 +157,9 @@ class leaf extends node {
     static Scanner theScan;
 
     // instance members
-    String the_str;
+    String theStr;
     int my_depth;
+
     void populate () {
         if (null == theScan || !theScan.hasNext ()) {
             try {
@@ -155,9 +169,10 @@ class leaf extends node {
                     System.exit (-2);
             }
         }
-        the_str = theScan.next ();
+        theStr = theScan.next ();
     }
+
     void express () {
-        ;
+        System.out.print (theStr);
     }
 }
