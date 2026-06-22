@@ -12,9 +12,13 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 
 // Populate a Java class with random code
 public class JompTree {
+    // class members
+    static Random theRandom;
+
     // main entry point
     public static void main(String[] args) {
         // check command line arguments
@@ -46,7 +50,9 @@ public class JompTree {
         System.out.println ("    public static void main(String[] args) {");
         System.out.println ("        double first = 1, second = 2, third = 3;");
 
-        // generate 25 random outputs on console
+        // generate 25 random outputs on
+        // the seed can be changed as removed, as needed
+        theRandom = new Random (0x12345678L);
         for (int i = 0; i < 25; i++)
         {
             node.nodeCount = 0;
@@ -145,7 +151,7 @@ class brnch extends node {
         int numOpnds = theWords.length - 1;
         while (0 < numOpnds--) {
             // tunable parameters help steer the code generator
-            if ((0.5 < Math.random ()) && (nodeCount < 15) && (theDepth < 11)) {
+            if ((0.5 < JompTree.theRandom.nextDouble ()) && (nodeCount < 15) && (theDepth < 11)) {
                 theNode = new brnch ();
             }
             else {
