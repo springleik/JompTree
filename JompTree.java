@@ -1,9 +1,11 @@
-/**********************************
+/***********************************************
 * Java Compiler Test Case Generator
 * File JompTree.java
 * M. Williamsen
+* https://github.com/springleik/JompTree/
+* http://www.williamsonic.com/CompTree/index.html
 * 21 June 2026
-*/
+************************************************/
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 
 // Populate a Java class with random code
 public class JompTree {
+    // main entry point
     public static void main(String[] args) {
         // check command line arguments
         if (args.length < 2) {
@@ -26,42 +29,52 @@ public class JompTree {
         brnch.theFile = new File (args[0]);
         leaf.theFile = new File (args[1]);
         try {
-            brnch.theScan = new Scanner (brnch.theFile);
-            leaf.theScan = new Scanner (leaf.theFile);
-        }
+            brnch.theScan = new Scanner (brnch.theFile);}
         catch (FileNotFoundException e) {
-            System.err.println ("File not found.");
+            System.err.println (String.format ("Branch file not found: %s", args[0]));
             System.exit (-2);
         }
+        try {
+            leaf.theScan = new Scanner (leaf.theFile);}
+        catch (FileNotFoundException e) {
+            System.err.println (String.format ("Leaf file not found: %s", args[1]));
+            System.exit (-3);
+        }
+
+        // start generating source code as compiler input
+        System.out.println ("class what {");
+        System.out.println ("    public static void main(String[] args) {");
+        System.out.println ("        double first = 1, second = 2, third = 3;");
 
         // generate 25 random outputs on console
-        System.out.println ("class what {");
-        System.out.println ("    public void what () {");
-        System.out.println ("        double what = 0, first = 1, second = 2, third = 3;");
         for (int i = 0; i < 25; i++)
         {
             node.nodeCount = 0;
             node.theDepth = 0;
             node.maxDepth = 0;
 
-            // construct & randomly populate tree
+            // construct & randomly populate a composite tree
             node listHead = new brnch ();
             listHead.populate ();
 
-            // express tree recursively as text on console
-            System.out.print ("        what = ");
+            // express tree by recursive descent as console text
+            System.out.print ("        System.out.println (");
             listHead.express ();
-            System.out.println ("; /* " + node.nodeCount + ", " + node.maxDepth + " */");
+
+            // add comment text describing the line generated
+            System.out.println ("); /* " + node.nodeCount + ", " + node.maxDepth + " */");
         }
 
         System.out.println ("    }");
         System.out.println ("}");
+
+        // close input files
         brnch.theScan.close ();
         leaf.theScan.close ();
     }
 }
 
-// abstract base class to compose objects into a tree structure
+// abstract base class of objects to compose into a tree structure
 abstract class node
 {
 // class members
@@ -84,64 +97,71 @@ class brnch extends node {
     String pre;
     String inter;
     String post;
-    int numOpnds;
     List <node> theList;
 
+    // compose a random tree of branch and leaf nodes
     void populate () {
         theDepth += 1;
-        if (null == theScan || !theScan.hasNext ()) {
+        // rewind branch input file as needed
+        if (!theScan.hasNext ()) {
             try {
-                theScan = new Scanner (theFile); }
-                catch (FileNotFoundException e) {
-                    System.err.println ("Branch file not found.");
-                    System.exit (-2);
+                theScan = new Scanner (theFile);}
+            catch (FileNotFoundException e) {
+                System.err.println ("Branch file not open.");
+                System.exit (-4);
             }
         }
+
+        // read and tokenize a line from branch input file
         String theLine = theScan.nextLine ();
         String [] theWords = theLine.split (" ", 4);
+
         // handle unary operations
         if (theWords.length == 2) {
-            numOpnds = 1;
             pre = theWords [0];
             inter = null;
             post = theWords[1];
         }
         // handle binary operations
         else if (theWords.length == 3) {
-            numOpnds = 2;
             pre = theWords [0];
             inter = theWords [1];
             post = theWords [2];
         }
         // handle ternary operations
         else if (theWords.length == 4) {
-            numOpnds = 3;
             pre = theWords [0];
             inter = theWords [1];
             post = theWords [3];
         }
         else {
-            System.err.println ("Wrong word count on a line.");
-            System.exit (-3);
+            System.err.println (String.format ("Bad word count: %d", theWords.length));
+            System.exit (-5);
         }
 
         // append the right number of operands
         node theNode = null;
         theList = new ArrayList <> ();
-        for (int i = 0; i < numOpnds; i++) {
+        int numOpnds = theWords.length - 1;
+        while (0 < numOpnds--) {
+            // tunable parameters help steer the code generator
             if ((0.5 < Math.random ()) && (nodeCount < 15) && (theDepth < 11)) {
                 theNode = new brnch ();
             }
             else {
                 theNode = new leaf ();
             }
+
+            // append and populate recursively
             theList.add (theNode);
             theNode.populate ();
         }
         theDepth -= 1;
     }
 
+    // serialize this branch node recursively
     void express () {
+        // render preamble always
         System.out.print (pre);
         boolean first = true;
         for (node aNode: theList) {
@@ -149,10 +169,12 @@ class brnch extends node {
                 first = false;
             }
             else {
+                // render interamble if two or more arguments
                 System.out.print (inter);
             }
             aNode.express ();
         }
+        // render postamble always
         System.out.print (post);
     }
 }
@@ -167,23 +189,26 @@ class leaf extends node {
     String theStr;
     int myDepth;
 
+    // obtain argument value from leaf input file
     void populate () {
         nodeCount += 1;
         myDepth = theDepth;
         if (theDepth > maxDepth) {
             maxDepth = theDepth;
         }
-        if (null == theScan || !theScan.hasNext ()) {
+        // rewind leaf input file as needed
+        if (!theScan.hasNext ()) {
             try {
                 theScan = new Scanner (theFile); }
                 catch (FileNotFoundException e) {
-                    System.err.println ("Leaf file not found.");
-                    System.exit (-2);
+                    System.err.println ("Leaf file not open.");
+                    System.exit (-6);
             }
         }
         theStr = theScan.next ();
     }
 
+    // serialize this leaf node
     void express () {
         System.out.print (theStr);
     }
