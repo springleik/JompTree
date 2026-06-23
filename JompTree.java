@@ -54,7 +54,7 @@ public class JompTree {
         // random seed can be changed or removed, as needed
         theRandom = new Random (0x12345678L);
         int lineCount = 25;
-        while (0 != lineCount--)
+        while (0 < lineCount--)
         {
             node.nodeCount = 0;
             node.theDepth = 0;
