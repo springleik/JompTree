@@ -64,7 +64,11 @@ Redirect the console output to a file, to be compiled:
 MarksiMac:JompTree williamm$ java JompTree Jbrnch.txt Jleaf.txt > what.java
 Opening branch input file: Jbrnch.txt, leaf input file: Jleaf.txt
 ```
-Compile the generated output:
+See if anything has changed in the Java output since the last commit:
+```
+MarksiMac:JompTree williamm$ git diff what.java
+```
+An empty diff means nothing changed. Now compile the generated output:
 ```
 MarksiMac:JompTree williamm$ javac what.java
 ```
@@ -97,4 +101,9 @@ NaN
 20.154700538379252
 1.0
 ```
-Assuming you got the same answer I did, you now have a workflow that will let you start experimenting.
+This output is the result of evaluating each math expression in the generated code. To simplify this example I only included objects that are doubles or can be evaluated as doubles. An obvious enhancement would be to have multiple input files containing a variety of data types, along with needed scaffolding. We can use git to check if anything has changed:
+```
+MarksiMac:JompTree williamm$ java what > what.txt
+MarksiMac:JompTree williamm$ git diff what.txt
+```
+If it all checks out, you now have a workflow that will let you start experimenting.
