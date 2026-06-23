@@ -72,7 +72,7 @@ An empty diff means nothing changed. Now compile the generated output:
 ```
 MarksiMac:JompTree williamm$ javac what.java
 ```
-Run the random tree test code:
+And run the random tree test code:
 ```
 MarksiMac:JompTree williamm$ java what
 3.0
