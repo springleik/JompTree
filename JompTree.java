@@ -4,7 +4,7 @@
 * M. Williamsen
 * https://github.com/springleik/JompTree/
 * http://www.williamsonic.com/CompTree/index.html
-* 21 June 2026
+* 23 June 2026
 ************************************************/
 
 import java.io.File;
@@ -50,10 +50,11 @@ public class JompTree {
         System.out.println ("    public static void main(String[] args) {");
         System.out.println ("        double first = 1, second = 2, third = 3;");
 
-        // generate 25 random outputs on
-        // the seed can be changed as removed, as needed
+        // generate 25 random outputs on the console
+        // random seed can be changed or removed, as needed
         theRandom = new Random (0x12345678L);
-        for (int i = 0; i < 25; i++)
+        int lineCount = 25;
+        while (0 != lineCount--)
         {
             node.nodeCount = 0;
             node.theDepth = 0;
